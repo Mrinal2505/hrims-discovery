@@ -1,0 +1,38 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: hrims-discovery
+
+eureka:
+  instance:
+    hostname: localhost
+
+  client:
+    # This node IS the server — it must not register with itself
+    register-with-eureka: false
+    # No need to fetch its own registry
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+  server:
+    # Do not wait for other peers to sync on startup (single-node setup)
+    wait-time-in-ms-when-sync-empty: 0
+    # Disable self-preservation in dev — in prod set this to true
+    # Self-preservation prevents Eureka from evicting instances when
+    # it stops receiving heartbeats (protects against network blips)
+    enable-self-preservation: false
+    # Check for dead instances every 5 seconds
+    eviction-interval-timer-in-ms: 5000
+
+# Actuator — expose health endpoint
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
